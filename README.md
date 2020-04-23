@@ -4,21 +4,15 @@ React as the frontend framework, express as the backend framework.
 ## Setup
 ```
 yarn install
-(cd react && yarn install)
+yarn build 
 cat .env.template > .env
 ```
 
 Add your db credentials to the newly created dotenv file
 
-
-## Build react app
-```
-(cd react && yarn build)
-```
-
 ## Run express app
 ```
-yarn run start
+yarn start
 ```
 
 ### React page
