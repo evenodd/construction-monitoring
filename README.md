@@ -1,12 +1,22 @@
 # Construction Monitoring App
 React as the frontend framework, express as the backend framework.
 
-## Build react app
+## Setup
 ```
-$ (cd react && yarn build)
+yarn install
+(cd react && yarn install)
+cat .env.template > .env
 ```
 
-## Run app
+Add your db credentials to the newly created dotenv file
+
+
+## Build react app
+```
+(cd react && yarn build)
+```
+
+## Run express app
 ```
 yarn run start
 ```
