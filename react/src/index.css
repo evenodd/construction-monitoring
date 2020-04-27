@@ -11,3 +11,28 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+#siteModelContainer .breadcrumbHolder {
+  margin-top: 20px;
+  margin-bottom: 20px; 
+}
+
+#siteModelContainer .labelHolder {
+  text-align: end;
+}
+
+.dropZoneHolder {
+  width: 100%;
+}
+
+.dropZone {
+  width: 100%;
+  height: 500px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  border: 3px solid #bababa;
+  margin: 10px;
+  border-radius: 20px;
+}

@@ -1,10 +1,13 @@
 var createError = require('http-errors');
 var express = require('express');
+const fileUpload = require('express-fileupload');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var apiRoute = require('./routes/api');
+var siteModelRoute = require('./routes/siteModel');
+var frontendRoute = require('./routes/frontend');
 
 var app = express();
 
@@ -16,9 +19,11 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(fileUpload());
 app.use(express.static(path.join(__dirname, 'react/build')));
-
+app.use('/app', frontendRoute);
 app.use('/api', apiRoute);
+app.use('/api/siteModel', siteModelRoute);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
