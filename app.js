@@ -1,15 +1,17 @@
-var createError = require('http-errors');
-var express = require('express');
+const createError = require('http-errors');
+const express = require('express');
 const fileUpload = require('express-fileupload');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 
-var apiRoute = require('./routes/api');
-var siteModelRoute = require('./routes/siteModel');
-var frontendRoute = require('./routes/frontend');
+const apiRoute = require('./routes/api');
+const siteModelRoute = require('./routes/siteModel');
+const frontendRoute = require('./routes/frontend');
+const roomRoute = require('./routes/room');
+const jobRoute = require('./routes/job');
 
-var app = express();
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -24,6 +26,8 @@ app.use(express.static(path.join(__dirname, 'react/build')));
 app.use('/app', frontendRoute);
 app.use('/api', apiRoute);
 app.use('/api/siteModel', siteModelRoute);
+app.use('/api/room', roomRoute);
+app.use('/api/job', jobRoute);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
