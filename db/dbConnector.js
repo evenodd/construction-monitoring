@@ -7,8 +7,7 @@ class DbConnector {
     }
 
     connect() {
-        console.log(this.uri);
-        mongoose.connect(this.uri,  { useNewUrlParser: true });
+        mongoose.connect(this.uri,  { useNewUrlParser: true , useUnifiedTopology: true});
         return mongoose.connection;
     }
 

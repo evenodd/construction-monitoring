@@ -2,16 +2,13 @@ import React from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Breadcrumb from 'react-bootstrap/Breadcrumb';
 import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
 import Jumbotron from 'react-bootstrap/Jumbotron';
-import { LinkContainer } from "react-router-bootstrap";
 import Spinner from 'react-bootstrap/Spinner';
 import Dropzone from 'react-dropzone';
 import Axios from 'axios';
-
-
+import BreadcrumbsPage from '../BreadcrumbsPage';
 
 export default class SiteModelAdd extends React.Component {
 
@@ -29,7 +26,6 @@ export default class SiteModelAdd extends React.Component {
 
 
     onDropHandler(acceptedFiles) {
-        console.log(acceptedFiles)
         this.setState({
             uploadedFile: acceptedFiles[0]
         });
@@ -38,7 +34,7 @@ export default class SiteModelAdd extends React.Component {
     onSubmitHandler(event) {
         var formData = new FormData();
         formData.append('file', this.state.uploadedFile);
-        formData.append('name', this.state.inputName);        
+        formData.append('name', this.state.inputName);
         this.setState({
             loading: true
         });
@@ -58,7 +54,6 @@ export default class SiteModelAdd extends React.Component {
 
 
     render() {
-
         var currentFileElement = (<div />)
         if (this.state.uploadedFile != null) {
             currentFileElement = (
@@ -72,15 +67,8 @@ export default class SiteModelAdd extends React.Component {
             );
         }
 
-        return (
-            <Container id="siteModelContainer">
-                <div className="breadcrumbHolder">
-                    <Breadcrumb>
-                        <Breadcrumb.Item href="/app/siteModels">SiteModels</Breadcrumb.Item>
-                        <Breadcrumb.Item active href="/app/siteModels/add">Create New</Breadcrumb.Item>
-                    </Breadcrumb>
-                </div>
-
+        const content = (
+            <Container>
                 <Row className="justify-content-md-center">
                     <Col md="4" className="labelHolder">
                         <label id="siteModelNameLabel">Site Model Name</label>
@@ -115,8 +103,17 @@ export default class SiteModelAdd extends React.Component {
                     <Button onClick={this.onSubmitHandler} disabled={this.state.loading}>Submit</Button>
 
                 </Row>
-
             </Container>
-        )
+        );
+        return (
+            <BreadcrumbsPage
+                items={[
+                    new BreadcrumbsPage.Item("Site Models", "/app/siteModels"),
+                    new BreadcrumbsPage.Item("Create New", "/app/siteModels/add").asActive()
+                ]}
+                content={content}
+            />
+        );
+
     }
 }
