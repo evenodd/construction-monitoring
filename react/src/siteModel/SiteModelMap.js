@@ -9,6 +9,7 @@ import BreadcrumbsPage from '../BreadcrumbsPage';
 import Image from 'react-bootstrap/Image';
 import Axios from 'axios';
 import LoadingPage from '../LoadingPage';
+import IMap from '../components/iMap/iMap';
 
 function RoomItem(props) {
     return (
@@ -62,7 +63,10 @@ export default class SiteModelMap extends React.Component {
             <Container>
                 <Row>
                     <Col md=" 12" className="d-flex justify-content-center">
-                        <Image src={imageSrc}/>
+                        {/* <Image src={imageSrc}/> */}
+                        <IMap siteModelId={this.id} 
+                            rooms={this.state.model.rooms}
+                            data={imageSrc}></IMap>
                     </Col>
                 </Row>
 

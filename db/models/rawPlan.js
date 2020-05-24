@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const RawPlabSchema = require('./rawPlanSchema');
+const RawPlanSchema = require('./rawPlanSchema');
 
-const RawPlan = mongoose.model('RawPlan', RawPlabSchema);
+const RawPlan = mongoose.model('RawPlan', RawPlanSchema);
 
 module.exports = RawPlan;
