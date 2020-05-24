@@ -12,7 +12,7 @@ export default class IMap extends React.Component {
                 return {
                     shape: "poly",
                     coords: room.coords.split(',').map(x => +x),
-                    href: `/app/siteModels/${this.props.siteModelId}/room/${room._id}`,
+                    href: `/app/siteModels/${props.siteModelId}/room/${room._id}`,
                     preFillColor: "rgba(0,255,0,0.3)",
                     strokeColor: "rgba(0,0,255,0.8)",
                     lineWidth: "2"
