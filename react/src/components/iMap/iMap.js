@@ -1,25 +1,39 @@
 import React from 'react';
 import Container from 'react-bootstrap/Container';
-import './iMap.css';
+import ImageMapper from 'react-image-mapper';
 
 export default class IMap extends React.Component {
+
+    constructor(props) {
+        super(props);
+        let areas = [];
+        if (props.rooms) {
+            areas = props.rooms.map(room => {
+                return {
+                    shape: "poly",
+                    coords: room.coords.split(',').map(x => +x),
+                    href: `/app/siteModels/${this.props.siteModelId}/room/${room._id}`,
+                    preFillColor: "rgba(0,255,0,0.3)",
+                    strokeColor: "rgba(0,0,255,0.8)",
+                    lineWidth: "2"
+                }
+            })
+        }
+        this.state = {
+            src: props.data,
+            map: {
+                name: "Rooms",
+                areas
+            },
+        }
+    }
+
     render() {
-        console.log(this);
         return (
             <Container>
-                <map name="primary">
-                {this.props.rooms.map(room => (
-                    <React.Fragment key={room.name}>
-                        <area shape="poly"
-                              class="area"
-                              coords={room.coords}
-                              href={`/app/siteModels/${this.props.siteModelId}/room/${room._id}`} 
-                              alt={room.name}></area>
-                    </React.Fragment>
-                ))}
-                </map>
-                <img useMap="#primary" 
-                     src={this.props.data}></img>
+                <ImageMapper 
+                    src={this.state.src}
+                    map={this.state.map}/>
             </Container>
         )
     }
