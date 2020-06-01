@@ -5,6 +5,7 @@ const SiteModel = require('../db/models/siteModel');
 const Room = require('../db/models/room');
 const DbConnector = require('../db/dbConnector');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 router.get('/site/:siteModelId', Utils.asyncRoute(async function (req, res, next) {
     const {siteModelId} = req.params;
@@ -17,6 +18,19 @@ router.get('/site/:siteModelId', Utils.asyncRoute(async function (req, res, next
         console.error(e);
         res.status(500).send(e);
     }
+}));
+
+router.get('/all', cors(), Utils.asyncRoute(async function (req, res, next) {
+    const connector = new DbConnector();
+    connector.connect();
+    const models = await SiteModel.find().lean().exec();
+    var rooms = [];
+    models.forEach((model) => {
+        model.rooms.forEach((room) => {
+            rooms.push(room);
+        })
+    });
+    res.send(rooms);
 }));
 
 router.get('/:id', Utils.asyncRoute(async function (req, res, next) {
