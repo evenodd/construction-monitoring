@@ -32,7 +32,7 @@ export default class MonitoringNodesPage extends React.Component {
         }
 
         render() {
-            const uri = `/app/monitoringNodes/${this.id}`
+            const uri = `/app/monitoringNodes/${this.deviceId}`
             return (
                 <LinkContainer to={uri}>
                     <ListGroup.Item 

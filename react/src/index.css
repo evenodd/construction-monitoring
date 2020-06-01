@@ -46,3 +46,12 @@ code {
   align-items: center;
   flex-direction: column;
 }
+
+.nodeConfigs .analysisSwitchHolder label {
+  width: 100%;
+  display: inline-block;
+}
+
+.nodeConfigs .analysisSwitchHolder label .switchHolder {
+  float: right;
+}
