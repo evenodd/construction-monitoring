@@ -49,4 +49,19 @@ router.post('/register', Utils.asyncRoute(async function (req, res, next) {
     }
 }));
 
+router.post('/:id', cors(), Utils.asyncRoute(async function (req, res, next) {
+    const {roomId, analysisModels} = req.body;
+    const { id } = req.params;
+
+    const connector = new DbConnector();
+    connector.connect();
+
+    const nodeConfig = await NodeConfig.findById(id).exec();
+    nodeConfig.roomId = roomId;
+    nodeConfig.analysisModels = analysisModels;
+    const saveResult = await nodeConfig.save();
+    res.send(saveResult);
+
+}));
+
 module.exports = router;

@@ -20,6 +20,7 @@ export default class MonitoringNodeConfigPage extends React.Component {
     constructor(props) {
         super(props);
         this.handleNodeConfigResponse = this.handleNodeConfigResponse.bind(this);
+        this.handleCurrentRoomResponse = this.handleCurrentRoomResponse.bind(this);
         this.handleSiteModelsResponse = this.handleSiteModelsResponse.bind(this);
         this.handleRoomsResponse = this.handleRoomsResponse.bind(this);
         this.handleSiteModelSelectChange = this.handleSiteModelSelectChange.bind(this);
@@ -36,6 +37,7 @@ export default class MonitoringNodeConfigPage extends React.Component {
             nodeConfig: null,
             submitInProgress: false,
             siteModels: [],
+            currentRoom: null,
             rooms: [],
             registeredRoom: null,
             wallConstructionEnabled: false,
@@ -49,13 +51,25 @@ export default class MonitoringNodeConfigPage extends React.Component {
     }
 
     handleNodeConfigResponse(response) {
+        const loading = response.data.roomId != null;
+
+        if (loading) {
+            Axios.get(`/api/room/${response.data.roomId}`).then(this.handleCurrentRoomResponse);
+        }
         this.setState({
-            loading: false,
+            loading: loading,
             nodeConfig: response.data,
             registeredRoom: response.data.roomId,
             wallConstructionEnabled: response.data.analysisModels.includes(WALL_CONSTRUCTION),
             wallPaintingEnabled: response.data.analysisModels.includes(WALL_PAINT),
             wallDefectEnabled: response.data.analysisModels.includes(WALL_DEFECT),
+        });
+    }
+
+    handleCurrentRoomResponse(response) {
+        this.setState({
+            currentRoom: response.data.rooms[0],
+            loading: false
         });
     }
 
@@ -78,7 +92,8 @@ export default class MonitoringNodeConfigPage extends React.Component {
 
     handleRoomSelectChange(event) {
         this.setState({
-            registeredRoom: event.target.value
+            registeredRoom: event.target.value,
+            currentRoom: null
         });
     }
 
@@ -117,7 +132,7 @@ export default class MonitoringNodeConfigPage extends React.Component {
             analysisModels.push(WALL_DEFECT);
         }
 
-        Axios.post(`/api/configModel/${this.state.nodeConfig._id}`, {
+        Axios.post(`/api/nodeConfig/${this.state.nodeConfig._id}`, {
             roomId: this.state.registeredRoom,
             analysisModels: analysisModels
         })
@@ -146,6 +161,10 @@ export default class MonitoringNodeConfigPage extends React.Component {
                 <option value={room._id}>{room.name}</option>
             );
         })
+        let currentRoomOption = null;
+        if (this.state.currentRoom != null) {
+            currentRoomOption = (<option value={this.state.currentRoom._id} selected>{this.state.currentRoom.name}</option>)
+        }
 
         const content = (
             <Container className="nodeConfigs">
@@ -173,6 +192,7 @@ export default class MonitoringNodeConfigPage extends React.Component {
                             registeredRoom={this.state.registeredRoom}
                         >
                             <option value="" disabled selected>Select a Room</option>
+                            {currentRoomOption}
                             {roomOptions}
                         </Form.Control>
                     </Form.Group>
