@@ -26,6 +26,11 @@ export class Header extends React.Component {
                                 <NavLink>Site Models</NavLink>
                             </LinkContainer>
                         </NavItem>
+                        <NavItem>
+                            <LinkContainer to="/app/monitoringNodes">
+                                <NavLink>Monitoring Nodes</NavLink>
+                            </LinkContainer>
+                        </NavItem>
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
