@@ -13,7 +13,6 @@ router.put('/', Utils.asyncRoute(async function (req, res, next) {
         name: name,
         description: description,
         images: [],
-
     });
     try {
         connector.connect();
