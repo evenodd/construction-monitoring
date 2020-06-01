@@ -12,6 +12,7 @@ import RoomAdd from './room/RoomAdd';
 import RoomPage from './room/RoomPage';
 import JobAdd from './job/JobAdd';
 import MonitoringNodesPage from "./monitoringNodes/MonitoringNodesPage";
+import MonitoringNodeConfigPage from "./monitoringNodes/MonitoringNodeConfigPage";
 
 export default function Router() {
     return (
@@ -29,6 +30,7 @@ export default function Router() {
                     <SiteModels/>
                 </Route>
 
+                <Route path="/app/monitoringNodes/:id" component={MonitoringNodeConfigPage}/>
                 <Route path="/app/monitoringNodes" component={MonitoringNodesPage}/>
                 
                 <Route exact path="/app">
