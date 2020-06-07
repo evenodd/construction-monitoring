@@ -11,6 +11,7 @@ import SiteModelMap from './siteModel/SiteModelMap';
 import RoomAdd from './room/RoomAdd';
 import RoomPage from './room/RoomPage';
 import JobAdd from './job/JobAdd';
+import JobPage from './job/JobPage';
 
 export default function Router() {
     return (
@@ -21,6 +22,7 @@ export default function Router() {
                     <SiteModelAdd/>
                 </Route>
                 <Route path="/app/siteModels/:siteModelId/addRoom" component={RoomAdd}/>
+                <Route path="/app/siteModels/:siteModelId/room/:roomId/job/:jobId" component={JobPage}/>
                 <Route path="/app/siteModels/:siteModelId/room/:roomId/addJob" component={JobAdd}/>
                 <Route path="/app/siteModels/:siteModelId/room/:id" component={RoomPage}/>
                 <Route path="/app/siteModels/:id/map" component={SiteModelMap}/>

@@ -5,7 +5,7 @@ import BreadcrumbsPage from '../BreadcrumbsPage';
 
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import {Redirect} from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import FormControl from 'react-bootstrap/FormControl';
 import Spinner from 'react-bootstrap/Spinner';
 import Button from 'react-bootstrap/Button';

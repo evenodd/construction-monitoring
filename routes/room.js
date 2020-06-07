@@ -11,7 +11,7 @@ router.get('/site/:siteModelId', Utils.asyncRoute(async function (req, res, next
     const connector = new DbConnector();
     connector.connect();
     try {
-        siteModel = await SiteModel.findById(siteModelId).select("rooms").lean().exec();
+        siteModel = await SiteModel.findById(siteModelId).select('rooms').lean().exec();
         res.send(siteModel.rooms);
     } catch (e) {
         console.error(e);
@@ -25,8 +25,9 @@ router.get('/:id', Utils.asyncRoute(async function (req, res, next) {
     try {
         connector.connect();
         const room = await SiteModel.findOne(
-            {'rooms._id': mongoose.Types.ObjectId(id)},{'rooms.$': true}
+            {'rooms._id': mongoose.Types.ObjectId(id)}, {'rooms.$': true}
         ).lean().exec();
+
         res.send(room);
     } catch (e) {
         console.error(e);
@@ -43,7 +44,7 @@ router.put('/', Utils.asyncRoute(async function (req, res, next) {
     });
     try {
         connector.connect();
-        const siteModel = await SiteModel.findById(siteModelId).select("rooms").exec();
+        const siteModel = await SiteModel.findById(siteModelId).select('rooms').exec();
         siteModel.rooms.push(room);
         siteModel.save();
         res.send(room);
