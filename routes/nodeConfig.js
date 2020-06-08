@@ -4,6 +4,9 @@ const Utils = require('./routeUtils');
 const NodeConfig = require('../db/models/nodeConfig');
 const DbConnector = require('../db/dbConnector');
 const cors = require('cors');
+const { sse } = require('@toverux/expresse');
+
+var pollCache = {};
 
 router.get('/search', cors(), Utils.asyncRoute(async function (req, res, next) {
     const connector = new DbConnector();
@@ -62,6 +65,34 @@ router.post('/:id', cors(), Utils.asyncRoute(async function (req, res, next) {
     const saveResult = await nodeConfig.save();
     res.send(saveResult);
 
+}));
+
+router.get('/poll/:deviceId', sse({ flushHeaders: false }), Utils.asyncRoute(async function (req, res, next) {
+    const { deviceId } = req.params;
+    const connector = new DbConnector();
+    connector.connect();
+    
+    while(true) {
+        // 1 minute timeout on db polls
+        const nodeConfig = await Promise.all([
+            NodeConfig.findOne(
+                { 'deviceId': deviceId }
+            ).lean().exec(),
+            Utils.timeout(60000)
+        ]);
+
+        if (nodeConfig === null) {
+            res.status(404).send('Device not found');
+            break;
+        } else {
+            if ((pollCache[deviceId] !== null || pollCache[deviceId] !== undefined) && pollCache[deviceId] == nodeConfig) {
+                res.sse.event('unchanged', nodeConfig)
+            } else {
+                pollCache[deviceId] = nodeConfig
+                res.sse.event('update', nodeConfig)
+            }
+        }
+    }
 }));
 
 module.exports = router;

@@ -7,6 +7,7 @@
     "build": "cd react && yarn install && yarn build"
   },
   "dependencies": {
+    "@toverux/expresse": "^2.4.0",
     "axios": "^0.19.2",
     "bootstrap": "^4.4.1",
     "cookie-parser": "~1.4.4",
