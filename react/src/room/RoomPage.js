@@ -142,7 +142,7 @@ const RoomOverview = (props) => {
 
     const calculateCompletedJobs = (jobs) => {
         const completed = jobs.filter(job => job.completed);
-        const pc = jobs.length ? (completed.length / jobs.length) : 0;
+        const pc = jobs.length && (completed.length / jobs.length);
         return pc.toFixed(2);
     }
 
