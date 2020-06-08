@@ -4,6 +4,8 @@ import LoadingPage from '../LoadingPage';
 import BreadcrumbsPage from '../BreadcrumbsPage';
 
 import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Alert from 'react-bootstrap/Alert';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 
@@ -80,9 +82,22 @@ export default class JobPage extends React.Component {
 
         const content = (
             <Container>
-                <h3>Job: {this.state.job.name}</h3>
-                <JobAnalysisTable analysis={this.state.job.analysis}/>
-                <div><Button onClick={this.onTestClick}>Add Test Analysis</Button></div>
+                <Row>
+                    <h3>Job: {this.state.job.name}</h3>
+                </Row>
+                <Row>
+                    <h3>Analysis History</h3>
+                </Row>
+                <Row>
+                    <JobAnalysisTable analysis={this.state.job.analysis}/>
+                    {
+                        !this.state.job.analysis ||
+                        !this.state.job.analysis.length
+                        ? <Alert variant="danger" style={{flexBasis: '100%'}}>Job not yet analysed.</Alert>
+                        : null
+                    }
+                </Row>
+                <Row><Button onClick={this.onTestClick}>Add Test Analysis</Button></Row>
             </Container>
         );
 
@@ -105,9 +120,7 @@ export default class JobPage extends React.Component {
 const JobAnalysisTable = (props) => {
 
     return (
-        <>
-        <h3>Analysis History</h3>
-        <Table>
+        <Table striped bordered hover>
             <thead>
                 <tr>
                     <th>Thumbnail</th>
@@ -126,10 +139,10 @@ const JobAnalysisTable = (props) => {
                     <td>{TimestampDateFormat.Job(a.timestamp)}</td>
                 </tr>    
                 ))
-                : null
+                : 
+                null
             }
             </tbody>
         </Table>
-        </>
     )
 }

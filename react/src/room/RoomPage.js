@@ -87,8 +87,10 @@ export default class RoomPage extends React.Component {
                 <Row>
                     <h3>Overview</h3>
                 </Row>
-
-                <RoomOverview room={this.state.room}/>
+                
+                <Row>
+                    <RoomOverview room={this.state.room}/>
+                </Row>
 
                 <Row>
                     <h3>Jobs</h3>
@@ -145,36 +147,33 @@ const RoomOverview = (props) => {
     }
 
     return (
-        <Row>
-            <ListGroup horizontal style={{textAlign: 'center'}}>
-                <ListGroup.Item>
-                    <h2 style={{marginBottom: 0}}>{calculateCompletedJobs(props.room.jobs)}%</h2> 
-                    <small>Complete</small>
-                </ListGroup.Item>
-                <ListGroup.Item>
-                    <h2 style={{marginBottom: 0}}>26</h2> 
-                    <small>Defects</small>
-                </ListGroup.Item>
-                <ListGroup.Item>
-                    {
-                        props.room.nodeId
-                        ? <h2 style={{marginBottom: 0}}>{props.room.nodeId}</h2> 
-                        : <small style={{display: 'block'}}>No node configured</small>
-                    }
-                    <small>Monitoring Node ID</small>
-                </ListGroup.Item>
-
-                <ListGroup.Item>
-                    {
-                        props.room.lastAnalysedTimestamp
-                        ? <h2>{TimestampDateFormat.Job(props.room.lastAnalysedTimestamp)}</h2>
-                        : <small style={{display: 'block'}}>Not analysed</small>
-                    }
-                    <small>Last updated</small>
-                </ListGroup.Item>
-                <ListGroup.Item><Button>Update Room Analysis</Button></ListGroup.Item>
-            </ListGroup>
-        </Row>
+        <ListGroup horizontal style={{textAlign: 'center'}}>
+            <ListGroup.Item>
+                <h2 style={{marginBottom: 0}}>{calculateCompletedJobs(props.room.jobs)}%</h2> 
+                <small>Complete</small>
+            </ListGroup.Item>
+            <ListGroup.Item>
+                <h2 style={{marginBottom: 0}}>26</h2> 
+                <small>Defects</small>
+            </ListGroup.Item>
+            <ListGroup.Item>
+                {
+                    props.room.nodeId
+                    ? <h2 style={{marginBottom: 0}}>{props.room.nodeId}</h2> 
+                    : <small style={{display: 'block'}}>No node configured</small>
+                }
+                <small>Monitoring Node ID</small>
+            </ListGroup.Item>
+            <ListGroup.Item>
+                {
+                    props.room.lastAnalysedTimestamp
+                    ? <h2>{TimestampDateFormat.Job(props.room.lastAnalysedTimestamp)}</h2>
+                    : <small style={{display: 'block'}}>Not analysed</small>
+                }
+                <small>Last updated</small>
+            </ListGroup.Item>
+            <ListGroup.Item><Button>Update Room Analysis</Button></ListGroup.Item>
+        </ListGroup>
     )
 }
 
