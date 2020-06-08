@@ -167,7 +167,7 @@ const RoomOverview = (props) => {
             <ListGroup.Item>
                 {
                     props.room.lastAnalysedTimestamp
-                    ? <h2>{TimestampDateFormat.Job(props.room.lastAnalysedTimestamp)}</h2>
+                    ? <h2>{TimestampDateFormat.RoomOverview(props.room.lastAnalysedTimestamp)}</h2>
                     : <small style={{display: 'block'}}>Not analysed</small>
                 }
                 <small>Last updated</small>

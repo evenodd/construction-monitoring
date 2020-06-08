@@ -16,7 +16,13 @@ TimestampDateFormat.ToDate = (timestamp) => {
         time, hours, minutes, seconds, date, month, year, fyear
     }
 }
+
 TimestampDateFormat.Job = (timestamp) => {
     const {date, month, year, hours, minutes} = TimestampDateFormat.ToDate(timestamp);
     return `${date}/${month}/${year} ${hours}:${minutes}`;
+}
+
+TimestampDateFormat.RoomOverview = (timestamp) => {
+    const {date, month, year, hours, minutes} = TimestampDateFormat.ToDate(timestamp);
+    return `${date}/${month} ${hours}:${minutes}`;
 }
