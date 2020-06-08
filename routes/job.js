@@ -50,8 +50,9 @@ router.get('/:jobId', Utils.asyncRoute(async function (req, res, next) {
 router.put('/test-analysis/:jobId', Utils.asyncRoute(async function (req, res, next) {
     const {jobId} = req.params;
     const connector = new DbConnector();
+    const timestamp = new Date().getTime();
     const jobAnalysis = new JobAnalysis({
-        timestamp: new Date().getTime(),
+        timestamp: timestamp,
         modelPrediction: 0.5,
     });
     try {
@@ -59,8 +60,11 @@ router.put('/test-analysis/:jobId', Utils.asyncRoute(async function (req, res, n
 
         const siteModel = await SiteModel.findOne({'rooms.jobs._id': mongoose.Types.ObjectId(jobId)}, {'rooms.jobs.$': true});
         const job = siteModel.rooms[0].jobs.find(job => job._id.equals(jobId));
-
+        
         job.analysis.unshift(jobAnalysis);
+
+        siteModel.rooms[0]['lastAnalysedTimestamp'] = timestamp;
+        
         siteModel.save();
 
         res.send(job);

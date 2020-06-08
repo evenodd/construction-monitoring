@@ -4,7 +4,8 @@ const JobSchema = require('./jobSchema');
 const RoomSchema = mongoose.Schema({
     name: String,
     coords: String,
-    jobs: [JobSchema]
+    jobs: [JobSchema],
+    lastAnalysedTimestamp: Number,
 });
 
 module.exports = RoomSchema;

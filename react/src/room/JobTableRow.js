@@ -37,7 +37,7 @@ export default class JobTableRow extends React.Component {
                 <td>14/07/2020</td>
                 <td>n/a</td>
                 <td>
-                    <LinkContainer to={`/app/siteModels/${this.props.siteModel._id}/room/${this.props.room._id}/job/${this.props.job._id}`}>
+                    <LinkContainer to={this.props.jobURL}>
                     {
                         this.props.job.analysis &&
                         this.props.job.analysis.length &&

@@ -12,6 +12,8 @@ import Modal from 'react-bootstrap/Modal';
 import ListGroup from 'react-bootstrap/ListGroup';
 import JobTableRow from './JobTableRow'
 
+import TimestampDateFormat from '../util/TimestampDateFormat';
+
 export default class RoomPage extends React.Component {
     constructor(props) {
         super(props);
@@ -74,8 +76,7 @@ export default class RoomPage extends React.Component {
             jobs = this.state.room.jobs.map(job => (
                 <JobTableRow
                     onThumbClick={this.handleOpenModal}
-                    siteModel={this.state.siteModel} 
-                    room={this.state.room}
+                    jobURL={`/app/siteModels/${this.state.siteModel._id}/room/${this.state.room._id}/job/${job._id}`}
                     job={job}
                 />
             ));
@@ -87,7 +88,7 @@ export default class RoomPage extends React.Component {
                     <h3>Overview</h3>
                 </Row>
 
-                <RoomOverview/>
+                <RoomOverview room={this.state.room}/>
 
                 <Row>
                     <h3>Jobs</h3>
@@ -135,12 +136,19 @@ export default class RoomPage extends React.Component {
 
 }
 
-const RoomOverview = () => {
+const RoomOverview = (props) => {
+
+    const calculateCompletedJobs = (jobs) => {
+        const completed = jobs.filter(job => job.completed);
+        const pc = jobs.length ? (completed.length / jobs.length) : 0;
+        return pc.toFixed(2);
+    }
+
     return (
         <Row>
             <ListGroup horizontal style={{textAlign: 'center'}}>
                 <ListGroup.Item>
-                    <h2 style={{marginBottom: 0}}>0%</h2> 
+                    <h2 style={{marginBottom: 0}}>{calculateCompletedJobs(props.room.jobs)}%</h2> 
                     <small>Complete</small>
                 </ListGroup.Item>
                 <ListGroup.Item>
@@ -148,12 +156,21 @@ const RoomOverview = () => {
                     <small>Defects</small>
                 </ListGroup.Item>
                 <ListGroup.Item>
-                    <h2 style={{marginBottom: 0}}>107</h2> 
+                    {
+                        props.room.nodeId
+                        ? <h2 style={{marginBottom: 0}}>{props.room.nodeId}</h2> 
+                        : <small style={{display: 'block'}}>No node configured</small>
+                    }
                     <small>Monitoring Node ID</small>
                 </ListGroup.Item>
+
                 <ListGroup.Item>
-                    <h2 style={{marginBottom: 0}}>19/07 16:59</h2> 
-                    <small>Last Updated</small>
+                    {
+                        props.room.lastAnalysedTimestamp
+                        ? <h2>{TimestampDateFormat.Job(props.room.lastAnalysedTimestamp)}</h2>
+                        : <small style={{display: 'block'}}>Not analysed</small>
+                    }
+                    <small>Last updated</small>
                 </ListGroup.Item>
                 <ListGroup.Item><Button>Update Room Analysis</Button></ListGroup.Item>
             </ListGroup>
