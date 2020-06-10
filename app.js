@@ -11,6 +11,7 @@ const frontendRoute = require('./routes/frontend');
 const roomRoute = require('./routes/room');
 const jobRoute = require('./routes/job');
 const nodeConfigRoute = require('./routes/nodeConfig');
+const analysisQueueRoute = require('./routes/analysisQueue');
 
 const app = express();
 
@@ -37,6 +38,7 @@ app.use('/api/siteModel', siteModelRoute);
 app.use('/api/room', roomRoute);
 app.use('/api/job', jobRoute);
 app.use('/api/nodeConfig', nodeConfigRoute);
+app.use('/api/analysisQueue', analysisQueueRoute);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

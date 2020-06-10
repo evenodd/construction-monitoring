@@ -6,7 +6,6 @@ import BreadcrumbsPage from '../BreadcrumbsPage';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
-import { LinkContainer } from "react-router-bootstrap";
 import Table from 'react-bootstrap/Table';
 import JobTableRow from './JobTableRow'
 
@@ -16,18 +15,24 @@ export default class RoomPage extends React.Component {
         this.handleRoomResponse = this.handleRoomResponse.bind(this);
         this.handleSiteModelResponse = this.handleSiteModelResponse.bind(this);
         this.handleAllPromisesResolved = this.handleAllPromisesResolved.bind(this);
+        this.handleStartAnalysis = this.handleStartAnalysis.bind(this);
+        this.handlePendingAnalysisResponse = this.handlePendingAnalysisResponse.bind(this);
+
         const {siteModelId, id} = this.props.match.params;
         this.id = id;
         this.siteModelId = siteModelId;
         this.state = {
             loading: true,
             room: null,
-            siteModel: null   
+            siteModel: null,
+            analysisPending: true
         }
         const roomPromise = Axios.get(`/api/room/${id}`);
         const siteModelPromise = Axios.get(`/api/siteModel/${siteModelId}`);
+        const pendingAnalysisPromise = Axios.get(`/api/analysisQueue/pending/${id}`);
         roomPromise.then(this.handleRoomResponse);
         siteModelPromise.then(this.handleSiteModelResponse);
+        pendingAnalysisPromise.then(this.handlePendingAnalysisResponse);
         Promise.all([roomPromise, siteModelPromise]).then(this.handleAllPromisesResolved);
     }
 
@@ -49,6 +54,18 @@ export default class RoomPage extends React.Component {
         });
     }
 
+    handleStartAnalysis(response) {
+        Axios.post('/api/analysisQueue', {
+            roomId: this.state.room._id
+        });
+    }
+
+    handlePendingAnalysisResponse(response) {
+        this.setState({
+            analysisPending: response.data
+        });
+    }
+
     render() {
         if(this.state.loading) {
             return (<LoadingPage/>);
@@ -58,6 +75,14 @@ export default class RoomPage extends React.Component {
 
         if (this.state.room.jobs) {
             jobs = this.state.room.jobs.map(job => (<JobTableRow job={job}/>));
+        }
+
+        const analysisButtonProps = {
+            onClick: this.handleStartAnalysis
+        };
+
+        if (this.state.analysisPending) {
+            analysisButtonProps.disabled = true;
         }
 
         const content= (
@@ -82,9 +107,7 @@ export default class RoomPage extends React.Component {
                     </Table>
                 </Row>
                 <Row className="justify-content-md-center buttonFooter">
-                    <LinkContainer to={`/app/siteModels/${this.siteModelId}/room/${this.id}/addJob`}>
-                        <Button>Add job</Button>
-                    </LinkContainer>
+                        <Button { ...analysisButtonProps } >Start Analysis</Button>
                 </Row>
             </Container>
         );
