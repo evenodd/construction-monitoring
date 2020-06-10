@@ -7,7 +7,11 @@ import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Table from 'react-bootstrap/Table';
+import Modal from 'react-bootstrap/Modal';
+import ListGroup from 'react-bootstrap/ListGroup';
 import JobTableRow from './JobTableRow'
+
+import TimestampDateFormat from '../util/TimestampDateFormat';
 
 export default class RoomPage extends React.Component {
     constructor(props) {
@@ -25,7 +29,8 @@ export default class RoomPage extends React.Component {
             loading: true,
             room: null,
             siteModel: null,
-            analysisPending: true
+            analysisPending: true,
+            siteModal: false,
         }
         const roomPromise = Axios.get(`/api/room/${id}`);
         const siteModelPromise = Axios.get(`/api/siteModel/${siteModelId}`);
@@ -66,6 +71,18 @@ export default class RoomPage extends React.Component {
         });
     }
 
+    handleOpenModal = (image) => {
+        this.setState({
+            showModal: true,
+        })
+    }
+
+    handleCloseModal = (image) => {
+        this.setState({
+            showModal: false,
+        })
+    }
+
     render() {
         if(this.state.loading) {
             return (<LoadingPage/>);
@@ -74,7 +91,13 @@ export default class RoomPage extends React.Component {
         let jobs = [];
 
         if (this.state.room.jobs) {
-            jobs = this.state.room.jobs.map(job => (<JobTableRow job={job}/>));
+            jobs = this.state.room.jobs.map(job => (
+                <JobTableRow
+                    onThumbClick={this.handleOpenModal}
+                    jobURL={`/app/siteModels/${this.state.siteModel._id}/room/${this.state.room._id}/job/${job._id}`}
+                    job={job}
+                />
+            ));
         }
 
         const analysisButtonProps = {
@@ -85,19 +108,32 @@ export default class RoomPage extends React.Component {
             analysisButtonProps.disabled = true;
         }
 
-        const content= (
+        const content = (
             <Container>
+                <Row>
+                    <h3>Overview</h3>
+                </Row>
+                
+                <Row>
+                    <RoomOverview room={this.state.room}/>
+                </Row>
+
                 <Row>
                     <h3>Jobs</h3>
                 </Row>
 
-                <Row className="justify-content-md-center buttonFooter">
+                <Row>
                     <Table striped bordered hover>
                         <thead>
                             <tr>
+                                <th>Preview</th>
                                 <th>Name</th>
+                                <th>Type</th>
                                 <th>Description</th>
                                 <th>Completed</th>
+                                <th>Start Date</th>
+                                <th>Complete Date</th>
+                                <th>History</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -109,6 +145,13 @@ export default class RoomPage extends React.Component {
                 <Row className="justify-content-md-center buttonFooter">
                         <Button { ...analysisButtonProps } >Start Analysis</Button>
                 </Row>
+
+                <Row>
+                    <LinkContainer to={`/app/siteModels/${this.siteModelId}/room/${this.id}/addJob`}>
+                        <Button>Add job</Button>
+                    </LinkContainer>
+                </Row>
+                <ImageModal show={this.state.showModal} onHide={this.handleCloseModal}/>
             </Container>
         );
         return (
@@ -123,4 +166,62 @@ export default class RoomPage extends React.Component {
         );
     }
 
+}
+
+const RoomOverview = (props) => {
+
+    const calculateCompletedJobs = (jobs) => {
+        const completed = jobs.filter(job => job.completed);
+        const pc = jobs.length && (completed.length / jobs.length);
+        return pc.toFixed(2);
+    }
+
+    return (
+        <ListGroup horizontal style={{textAlign: 'center'}}>
+            <ListGroup.Item>
+                <h2 style={{marginBottom: 0}}>{calculateCompletedJobs(props.room.jobs)}%</h2> 
+                <small>Complete</small>
+            </ListGroup.Item>
+            <ListGroup.Item>
+                <h2 style={{marginBottom: 0}}>26</h2> 
+                <small>Defects</small>
+            </ListGroup.Item>
+            <ListGroup.Item>
+                {
+                    props.room.nodeId
+                    ? <h2 style={{marginBottom: 0}}>{props.room.nodeId}</h2> 
+                    : <small style={{display: 'block'}}>No node configured</small>
+                }
+                <small>Monitoring Node ID</small>
+            </ListGroup.Item>
+            <ListGroup.Item>
+                {
+                    props.room.lastAnalysedTimestamp
+                    ? <h2>{TimestampDateFormat.RoomOverview(props.room.lastAnalysedTimestamp)}</h2>
+                    : <small style={{display: 'block'}}>Not analysed</small>
+                }
+                <small>Last updated</small>
+            </ListGroup.Item>
+            <ListGroup.Item><Button>Update Room Analysis</Button></ListGroup.Item>
+        </ListGroup>
+    )
+}
+
+const ImageModal = (props) => {
+    return (
+        <Modal show={props.show} onHide={props.onHide}>
+            <Modal.Header closeButton>
+                <Modal.Title>Modal heading</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+            <Modal.Footer>
+                <Button variant="secondary" onClick={props.onHide}>
+                    Close
+                </Button>
+                <Button variant="primary" onClick={props.onHide}>
+                    Save Changes
+                </Button>
+            </Modal.Footer>
+        </Modal>
+    )
 }
