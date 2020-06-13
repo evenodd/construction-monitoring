@@ -12,6 +12,7 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import JobTableRow from './JobTableRow'
 
 import TimestampDateFormat from '../util/TimestampDateFormat';
+import JobUtil from '../util/JobUtil';
 
 export default class RoomPage extends React.Component {
     constructor(props) {
@@ -106,6 +107,7 @@ export default class RoomPage extends React.Component {
 
         if (this.state.analysisPending) {
             analysisButtonProps.disabled = true;
+            analysisButtonProps.alt = "Analysis already pending..."
         }
 
         const content = (
@@ -145,12 +147,6 @@ export default class RoomPage extends React.Component {
                 <Row className="justify-content-md-center buttonFooter">
                         <Button { ...analysisButtonProps } >Start Analysis</Button>
                 </Row>
-
-                <Row>
-                    <LinkContainer to={`/app/siteModels/${this.siteModelId}/room/${this.id}/addJob`}>
-                        <Button>Add job</Button>
-                    </LinkContainer>
-                </Row>
                 <ImageModal show={this.state.showModal} onHide={this.handleCloseModal}/>
             </Container>
         );
@@ -170,16 +166,10 @@ export default class RoomPage extends React.Component {
 
 const RoomOverview = (props) => {
 
-    const calculateCompletedJobs = (jobs) => {
-        const completed = jobs.filter(job => job.completed);
-        const pc = jobs.length && (completed.length / jobs.length);
-        return pc.toFixed(2);
-    }
-
     return (
         <ListGroup horizontal style={{textAlign: 'center'}}>
             <ListGroup.Item>
-                <h2 style={{marginBottom: 0}}>{calculateCompletedJobs(props.room.jobs)}%</h2> 
+                <h2 style={{marginBottom: 0}}>{JobUtil.calculateCompletedJobs(props.room.jobs)}%</h2> 
                 <small>Complete</small>
             </ListGroup.Item>
             <ListGroup.Item>
