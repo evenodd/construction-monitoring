@@ -70,7 +70,8 @@ router.post('/analysis/:jobId', Utils.asyncRoute(async function (req, res, next)
 
         siteModel.rooms[0]['lastAnalysedTimestamp'] = timestamp;
         job.lastAnalysisId = analysisQueueId;
-        
+        job.completed = modelPrediction >= 0.85;
+
         await siteModel.save();
 
         const analysisQueue = await AnalysisQueue.findById(analysisQueueId).exec();
