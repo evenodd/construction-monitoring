@@ -5,10 +5,11 @@ const SiteModel = require('../db/models/siteModel');
 const DbConnector = require('../db/dbConnector');
 const Job = require('../db/models/job');
 const JobAnalysis = require('../db/models/jobAnalysis');
+const AnalysisQueue =require('../db/models/analysisQueue');
 const mongoose = require('mongoose');
 
 router.put('/', Utils.asyncRoute(async function (req, res, next) {
-    const {name, description, siteModelId, roomId} = req.body;
+    const {name, description, siteModelId, roomId, analysis} = req.body;
     const connector = new DbConnector();
     const job = new Job({
         name: name,
@@ -47,13 +48,17 @@ router.get('/:jobId', Utils.asyncRoute(async function (req, res, next) {
     }
 }));
 
-router.put('/test-analysis/:jobId', Utils.asyncRoute(async function (req, res, next) {
+
+router.post('/analysis/:jobId', Utils.asyncRoute(async function (req, res, next) {
     const {jobId} = req.params;
+    const {image, modelPrediction, analysisQueueId} = req.body
     const connector = new DbConnector();
     const timestamp = new Date().getTime();
     const jobAnalysis = new JobAnalysis({
+        jobId: jobId,
         timestamp: timestamp,
-        modelPrediction: 0.5,
+        modelPrediction: modelPrediction,
+        image: image,
     });
     try {
         connector.connect();
@@ -64,8 +69,28 @@ router.put('/test-analysis/:jobId', Utils.asyncRoute(async function (req, res, n
         job.analysis.unshift(jobAnalysis);
 
         siteModel.rooms[0]['lastAnalysedTimestamp'] = timestamp;
+        job.lastAnalysisId = analysisQueueId;
         
-        siteModel.save();
+        await siteModel.save();
+
+        const analysisQueue = await AnalysisQueue.findById(analysisQueueId).exec();
+        const siteModel = await SiteModel.findOne(
+            {
+                'rooms.jobs._id': {
+                    $in: analysisQueue.jobs.map(job => mongoose.Types.ObjectId(job))
+                },
+                'rooms.jobs.lastAnalysisId': {$not: {
+                    $eq: analysisQueueId
+                }}
+            }, 
+            {'rooms.jobs.$': true}
+        ).lean().exec();
+
+        if (siteModel == null) {
+            analysisQueue.completed = true;
+            analysisQueue.completedAt = new Date;
+            await analysisQueue.save();
+        }
 
         res.send(job);
     } catch (e) {
@@ -73,6 +98,5 @@ router.put('/test-analysis/:jobId', Utils.asyncRoute(async function (req, res, n
         res.status(500).send(e);
     }
 }));
-
 
 module.exports = router;

@@ -6,6 +6,7 @@ const AnalysisQueueSchema = mongoose.Schema({
         type: Boolean,
         default: false
     },
+    jobs: [String],
     createdAt: {
         type: Date,
         default: new Date

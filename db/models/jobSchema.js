@@ -13,6 +13,10 @@ const JobSchema = mongoose.Schema({
     startTimestamp: Number,
     endTimestamp: Number,
     analysis: [JobAnalysisSchema],
+    lastAnalysisId: {
+        type: String,
+        default: null
+    }
 });
 
 module.exports = JobSchema;

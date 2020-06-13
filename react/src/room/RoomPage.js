@@ -68,7 +68,7 @@ export default class RoomPage extends React.Component {
 
     handlePendingAnalysisResponse(response) {
         this.setState({
-            analysisPending: response.data
+            analysisPending: response.data.pendingAnalysis
         });
     }
 
