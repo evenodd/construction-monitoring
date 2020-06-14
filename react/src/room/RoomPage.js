@@ -101,15 +101,6 @@ export default class RoomPage extends React.Component {
             ));
         }
 
-        const analysisButtonProps = {
-            onClick: this.handleStartAnalysis
-        };
-
-        if (this.state.analysisPending) {
-            analysisButtonProps.disabled = true;
-            analysisButtonProps.alt = "Analysis already pending..."
-        }
-
         const content = (
             <Container>
                 <Row>
@@ -117,7 +108,10 @@ export default class RoomPage extends React.Component {
                 </Row>
                 
                 <Row>
-                    <RoomOverview room={this.state.room}/>
+                    <RoomOverview
+                        analysisPending={this.state.analysisPending}
+                        onSubmitAnalysis={this.handleStartAnalysis}
+                        room={this.state.room}/>
                 </Row>
 
                 <Row>
@@ -143,9 +137,6 @@ export default class RoomPage extends React.Component {
                             {jobs}
                         </tbody>
                     </Table>
-                </Row>
-                <Row className="justify-content-md-center buttonFooter">
-                        <Button { ...analysisButtonProps } >Start Analysis</Button>
                 </Row>
                 <ImageModal show={this.state.showModal} onHide={this.handleCloseModal}/>
             </Container>
@@ -192,7 +183,13 @@ const RoomOverview = (props) => {
                 }
                 <small>Last updated</small>
             </ListGroup.Item>
-            <ListGroup.Item><Button>Update Room Analysis</Button></ListGroup.Item>
+            <ListGroup.Item>
+                <Button 
+                    disabled={props.analysisPending}
+                    onClick={props.onSubmitAnalysis}>
+                    Start Room Analysis
+                </Button>
+            </ListGroup.Item>
         </ListGroup>
     )
 }

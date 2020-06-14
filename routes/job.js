@@ -75,25 +75,28 @@ router.post('/analysis/:jobId', Utils.asyncRoute(async function (req, res, next)
         await siteModel.save();
 
         const analysisQueue = await AnalysisQueue.findById(analysisQueueId).exec();
-        const siteModel = await SiteModel.findOne(
-            {
-                'rooms.jobs._id': {
-                    $in: analysisQueue.jobs.map(job => mongoose.Types.ObjectId(job))
-                },
-                'rooms.jobs.lastAnalysisId': {$not: {
-                    $eq: analysisQueueId
-                }}
-            }, 
-            {'rooms.jobs.$': true}
-        ).lean().exec();
+        const jobsNeedingAnalysis = (
+            await SiteModel.findOne(
+                {
+                    'rooms.jobs._id': {
+                        $in: analysisQueue.jobs.map(job => mongoose.Types.ObjectId(job))
+                    },
+                }, 
+                'rooms.$'
+            ).lean().exec()
+        )
+            .rooms[0]
+            .jobs
+            .filter(job => analysisQueue.jobs.includes(job._id) && job.lastAnalysisId != analysisQueueId);
 
-        if (siteModel == null) {
+
+        if (jobsNeedingAnalysis.length == 0) {
             analysisQueue.completed = true;
             analysisQueue.completedAt = new Date;
             await analysisQueue.save();
         }
 
-        res.send(job);
+        res.send([job, analysisQueue]);
     } catch (e) {
         console.error(e);
         res.status(500).send(e);
