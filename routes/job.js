@@ -54,6 +54,8 @@ router.post('/analysis/:jobId', Utils.asyncRoute(async function (req, res, next)
     const {image, modelPrediction, analysisQueueId} = req.body
     const connector = new DbConnector();
     const timestamp = new Date().getTime();
+    
+    // Create the analysis
     const jobAnalysis = new JobAnalysis({
         jobId: jobId,
         timestamp: timestamp,
@@ -63,17 +65,16 @@ router.post('/analysis/:jobId', Utils.asyncRoute(async function (req, res, next)
     try {
         connector.connect();
 
+        // Save and attach the analysis to the job
         const siteModel = await SiteModel.findOne({'rooms.jobs._id': mongoose.Types.ObjectId(jobId)}, {'rooms.jobs.$': true});
         const job = siteModel.rooms[0].jobs.find(job => job._id.equals(jobId));
-        
         job.analysis.unshift(jobAnalysis);
-
         siteModel.rooms[0]['lastAnalysedTimestamp'] = timestamp;
         job.lastAnalysisId = analysisQueueId;
         job.completed = modelPrediction >= 0.85;
-
         await siteModel.save();
 
+        // get all jobs hooked to the analysis queue
         const analysisQueue = await AnalysisQueue.findById(analysisQueueId).exec();
         const jobsNeedingAnalysis = (
             await SiteModel.findOne(
@@ -89,7 +90,7 @@ router.post('/analysis/:jobId', Utils.asyncRoute(async function (req, res, next)
             .jobs
             .filter(job => analysisQueue.jobs.includes(job._id) && job.lastAnalysisId != analysisQueueId);
 
-
+        // set the analysis queue to completed if all the jobs have been analysed
         if (jobsNeedingAnalysis.length == 0) {
             analysisQueue.completed = true;
             analysisQueue.completedAt = new Date;
