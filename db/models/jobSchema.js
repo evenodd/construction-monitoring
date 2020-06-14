@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const JobAnalysisSchema = require('./jobAnalysisSchema')
 
 const JobSchema = mongoose.Schema({
     name: String,
@@ -7,7 +8,15 @@ const JobSchema = mongoose.Schema({
         type: Boolean,
         default: false
     },
-    images: [Buffer]
+    images: [Buffer],
+    type: String,
+    startTimestamp: Number,
+    endTimestamp: Number,
+    analysis: [JobAnalysisSchema],
+    lastAnalysisId: {
+        type: String,
+        default: null
+    }
 });
 
 module.exports = JobSchema;
