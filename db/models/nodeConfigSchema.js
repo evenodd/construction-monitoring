@@ -5,6 +5,7 @@ const NodeConfigSchema = mongoose.Schema({
     deviceName: String,
     roomId: String,
     analysisModels: [String],
+    previewImg: String,
 });
 
 module.exports = NodeConfigSchema;
