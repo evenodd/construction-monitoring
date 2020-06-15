@@ -164,7 +164,7 @@ const RoomOverview = (props) => {
                 <small>Complete</small>
             </ListGroup.Item>
             <ListGroup.Item>
-                <h2 style={{marginBottom: 0}}>26</h2> 
+                <h2 style={{marginBottom: 0}}>0</h2> 
                 <small>Defects</small>
             </ListGroup.Item>
             <ListGroup.Item>

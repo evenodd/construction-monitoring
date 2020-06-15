@@ -18,15 +18,11 @@ export default class JobTableRow extends React.Component {
         return (
             <tr>
                 <td>
-                    <span onClick={this.onThumbnailClick(null)}> 
-                    {
-                        this.props.job.analysis && 
-                        this.props.job.analysis.length &&
-                        this.props.job.analysis[0].thumbnail
-                        ? '[_]'
-                        : 'No thumbnail'
-                    }
-                    </span>
+                    <button onClick={this.onThumbnailClick(null)}> 
+                    
+                       View image
+                    
+                    </button>
                 </td>
                 <td>{this.props.job.name}</td>
                 <td>Painting</td>
