@@ -32,6 +32,7 @@ export default class RoomPage extends React.Component {
             siteModel: null,
             analysisPending: true,
             siteModal: false,
+            jobModalImage: null,
         }
         const roomPromise = Axios.get(`/api/room/${id}`);
         const siteModelPromise = Axios.get(`/api/siteModel/${siteModelId}`);
@@ -74,13 +75,13 @@ export default class RoomPage extends React.Component {
 
     handleOpenModal = (image) => {
         this.setState({
-            showModal: true,
+            jobModalImage: image,
         })
     }
 
     handleCloseModal = (image) => {
         this.setState({
-            showModal: false,
+            jobModalImage: null,
         })
     }
 
@@ -138,7 +139,7 @@ export default class RoomPage extends React.Component {
                         </tbody>
                     </Table>
                 </Row>
-                <ImageModal show={this.state.showModal} onHide={this.handleCloseModal}/>
+                <ImageModal image={this.state.jobModalImage} onHide={this.handleCloseModal}/>
             </Container>
         );
         return (
@@ -196,17 +197,20 @@ const RoomOverview = (props) => {
 
 const ImageModal = (props) => {
     return (
-        <Modal show={props.show} onHide={props.onHide}>
+        <Modal show={!!props.image} onHide={props.onHide}>
             <Modal.Header closeButton>
-                <Modal.Title>Modal heading</Modal.Title>
+                <Modal.Title>Job Analysis Image</Modal.Title>
             </Modal.Header>
-            <Modal.Body>Woohoo, you're reading this text in a modal!</Modal.Body>
+            <Modal.Body>
+                {
+                    props.image
+                    ? <img style={{display: 'block', width: '100%'}} src={`data:image/jpeg;base64, ${ new Buffer(props.image, 'base64') }`}/>
+                    : null
+                }
+            </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={props.onHide}>
                     Close
-                </Button>
-                <Button variant="primary" onClick={props.onHide}>
-                    Save Changes
                 </Button>
             </Modal.Footer>
         </Modal>

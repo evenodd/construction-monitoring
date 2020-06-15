@@ -8,10 +8,11 @@ export default class JobTableRow extends React.Component {
 
     constructor(props) {
         super(props);
+        console.log(this.props.job.analysis[0]);
     }
 
     onThumbnailClick = (image) => () => {
-        this.props.onThumbClick();
+        this.props.onThumbClick(this.props.job.analysis[0].image || null);
     }
 
     render() {
@@ -22,8 +23,8 @@ export default class JobTableRow extends React.Component {
                     {
                         this.props.job.analysis && 
                         this.props.job.analysis.length &&
-                        this.props.job.analysis[0].thumbnail
-                        ? '[_]'
+                        this.props.job.analysis[0].image
+                        ? <img style={{display: 'block', width: '50px'}} src={`data:image/jpeg;base64,${ new Buffer(this.props.job.analysis[0].image, 'base64') }`}/>
                         : 'No thumbnail'
                     }
                     </span>
