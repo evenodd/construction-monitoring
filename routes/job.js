@@ -66,8 +66,8 @@ router.post('/analysis/:jobId', Utils.asyncRoute(async function (req, res, next)
         connector.connect();
 
         // Save and attach the analysis to the job
-        const siteModel = await SiteModel.findOne({'rooms.jobs._id': mongoose.Types.ObjectId(jobId)}, {'rooms.jobs.$': true});
-        const job = siteModel.rooms[0].jobs.find(job => job._id.equals(jobId));
+        const siteModel = await SiteModel.findOne({'rooms.jobs._id': mongoose.Types.ObjectId(jobId)}, {'rooms.jobs': true});
+        const job = siteModel.rooms.flatMap(room => room.jobs).find(job => job._id.equals(jobId));
         job.analysis.unshift(jobAnalysis);
         siteModel.rooms[0]['lastAnalysedTimestamp'] = timestamp;
         job.lastAnalysisId = analysisQueueId;
@@ -83,11 +83,11 @@ router.post('/analysis/:jobId', Utils.asyncRoute(async function (req, res, next)
                         $in: analysisQueue.jobs.map(job => mongoose.Types.ObjectId(job))
                     },
                 }, 
-                'rooms.$'
+                'rooms'
             ).lean().exec()
         )
-            .rooms[0]
-            .jobs
+            .rooms
+            .flatMap(room => room.jobs)
             .filter(job => analysisQueue.jobs.includes(job._id) && job.lastAnalysisId != analysisQueueId);
 
         // set the analysis queue to completed if all the jobs have been analysed
