@@ -134,7 +134,13 @@ const JobAnalysisTable = (props) => {
                 props.analysis.length 
                 ? props.analysis.map((a) => (
                 <tr>
-                    <td>{a.thumbnail ? '[_]' : 'No thumbnail'}</td>
+                    <td>
+                        {
+                            a.image
+                            ? <img style={{display: 'block', width: '50px'}} src={`data:image/jpeg;base64,${ new Buffer(a.image, 'base64') }`}/>
+                            : 'No thumbnail'
+                        }
+                    </td>
                     <td>{a.modelPrediction}</td>
                     <td>{TimestampDateFormat.Job(a.timestamp)}</td>
                 </tr>    
