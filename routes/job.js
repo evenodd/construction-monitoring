@@ -66,10 +66,11 @@ router.post('/analysis/:jobId', Utils.asyncRoute(async function (req, res, next)
         connector.connect();
 
         // Save and attach the analysis to the job
-        const siteModel = await SiteModel.findOne({'rooms.jobs._id': mongoose.Types.ObjectId(jobId)}, {'rooms.jobs': true});
-        const job = siteModel.rooms.flatMap(room => room.jobs).find(job => job._id.equals(jobId));
+        const siteModel = await SiteModel.findOne({'rooms.jobs._id': mongoose.Types.ObjectId(jobId)}, 'rooms');
+        const room = siteModel.rooms.find(room => typeof room.jobs.find(job => job._id.equals(jobId)) != 'undefined');
+        const job = room.jobs.find(job => job._id.equals(jobId));
         job.analysis.unshift(jobAnalysis);
-        siteModel.rooms[0]['lastAnalysedTimestamp'] = timestamp;
+        room.lastAnalysedTimestamp = timestamp;
         job.lastAnalysisId = analysisQueueId;
         job.completed = modelPrediction >= 0.85;
         await siteModel.save();
